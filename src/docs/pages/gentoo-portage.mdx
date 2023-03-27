@@ -1,0 +1,26 @@
+# gentoo portage 使用帮助
+
+## 地址
+[https://repo.hlug.cn:30443/gentoo-portage](https://repo.hlug.cn:30443/gentoo-portage)
+
+## 说明
+Gentoo Portage 软件源
+
+
+## 收录架构
+ALL
+
+## 使用说明
+
+新建或修改 `/etc/portage/repos.conf`：
+
+```shell
+[DEFAULT]
+main-repo = gentoo
+
+[gentoo]
+location = /usr/portage
+sync-type = rsync
+sync-uri = rsync://211.67.25.90:8081/gentoo-portage/
+auto-sync = yes
+```

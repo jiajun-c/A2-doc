@@ -14,3 +14,7 @@
       link: '/pages/nextcloud'
     - label: 'Sharelatex'
       link: '/pages/sharelatex'
+    - label: 'archlinux'
+      link: '/pages/archlinux'
+    - label: 'gentoo-portage'
+      link: '/pages/gentoo-portage'
