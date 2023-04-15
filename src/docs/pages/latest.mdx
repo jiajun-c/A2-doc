@@ -1,0 +1,47 @@
+# 最新代码配置
+
+## 1. 代码拉取
+
+首先需要安装pip3, 通过pip3 再安装mercurial
+```shell
+sudo yum install epel-release -y
+sudo yum install python3-devel python3 -y
+sudo yum groupinstall 'development tools' -y
+pip3 --version
+pip3 install mercurial
+``` 
+
+注意我们的python版本需要为python3.7+
+```shell
+yum install python38
+```
+## 2. 尝试编译
+第一次遇到的问题
+![image.png](https://s2.loli.net/2023/04/12/B9sY2Vkhf3cN4Al.png)
+
+解决
+```shell
+yum install alsa-lib-devel
+```
+
+第二次
+
+```shell
+ 0:10.24 checking for libpulse... no
+ 0:10.24 ERROR: Package libpulse was not found in the pkg-config search path.
+ 0:10.24 ERROR: Perhaps you should add the directory containing `libpulse.pc'
+ 0:10.24 ERROR: to the PKG_CONFIG_PATH environment variable
+ 0:10.25 ERROR: Package 'libpulse', required by 'virtual:world', not foun
+```
+
+第三次 rust依赖的问题
+
+在loongnix源中拉取的rust的版本比较低，可能无法进行编译的工作，所以此时需要从loongarchlinux进行偷包的操作
+
+将对应patch文件复制过去，随后开始打补丁
+
+在打完补丁之后发现编译可以通过但是无法找到生成的文件
+
+尝试修改bootstrap.py文件，向其中第327行添加关于loongarch64的信息
+
+

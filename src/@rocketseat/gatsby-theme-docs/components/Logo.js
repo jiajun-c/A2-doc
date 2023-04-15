@@ -12,7 +12,7 @@ export default function Logo(props) {
             </g>
             <g>
                 <title>Layer 1</title>
-                <text font-style="italic" font-weight="bold" text-anchor="start" font-family="Euphoria, sans-serif" font-size="24" id="svg_1" y="26.149994" x="19.5" stroke-width="0" stroke="#000" fill="#000000">LUG@HUST</text>
+                <text font-style="italic" font-weight="bold" text-anchor="start" font-family="Euphoria, sans-serif" font-size="24" id="svg_1" y="26.149994" x="19.5" stroke-width="0" stroke="#000" fill="#000000">LoongArch</text>
             </g>
         </svg>
     );

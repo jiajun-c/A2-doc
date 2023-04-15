@@ -2,19 +2,7 @@
 
 - label: '简介'
   link: '/'
-- label: 现存网页
+- label: 移植记录
   items:
-    - label: 'Mirror'
-      link: '/pages/mirror'
-    - label: 'Repo'
-      link: '/pages/repo'
-    - label: 'Grafana'
-      link: '/pages/grafana'
-    - label: 'Nextcloud'
-      link: '/pages/nextcloud'
-    - label: 'Sharelatex'
-      link: '/pages/sharelatex'
-    - label: 'archlinux'
-      link: '/pages/archlinux'
-    - label: 'gentoo-portage'
-      link: '/pages/gentoo-portage'
+    - label: 'latest'
+      link: '/pages/latest'
