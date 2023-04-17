@@ -1,0 +1,131 @@
+# new note
+91版编译
+-----
+
+#### 1.获得可用源码镜像
+
+*   可以用HG或者从[RELEASE](https://archive.mozilla.org/pub/thunderbird/releases/)里下载
+    *   据林润泽说，HG克隆的会有奇怪的问题
+        *   但荀阳霖总是会在release版遇到“mach.util.UserError: Could not identify the root directory of your checkout! Are you running \`mach bootstrap\` in an hg or git clone?”
+
+#### 2.更新autoconf，并增加LA的CPU标记
+
+*   我在`/root`里放了一份足够新的`config.guess`和`config.sub`。只需要将他们复制到`build/autoconf/`里替换同名文件即可
+*   在`python/mozbuild/mozbuild`的两个表里增加LA相关信息。diff如下
+
+```diff
+diff -r f21620428eb7 python/mozbuild/mozbuild/configure/constants.py
+--- a/python/mozbuild/mozbuild/configure/constants.py   Thu Sep 15 17:24:46 2022 +0200
++++ b/python/mozbuild/mozbuild/configure/constants.py   Mon Apr 17 12:42:46 2023 +0800
+@@ -47,6 +47,7 @@
+     "arm": 32,
+     "hppa": 32,
+     "ia64": 64,
++    "loongarch": 64,
+     "m68k": 32,
+     "mips32": 32,
+     "mips64": 64,
+@@ -91,6 +92,7 @@
+         ("hppa", "__hppa__"),
+         ("sparc64", "__sparc__ && __arch64__"),
+         ("sparc", "__sparc__"),
++        ("loongarch","__loongarch__"),
+         ("m68k", "__m68k__"),
+         ("mips64", "__mips64"),
+         ("mips32", "__mips__"),
+```
+
+*   在`build/moz.configure/init.configure`中增加LA的信息，diff如下。(注意这里的添加行号不太好，我随手插到ia64和x86中间去了)
+
+```diff
+diff -r f21620428eb7 build/moz.configure/init.configure
+--- a/build/moz.configure/init.configure        Thu Sep 15 17:24:46 2022 +0200
++++ b/build/moz.configure/init.configure        Mon Apr 17 12:46:11 2023 +0800
+@@ -726,6 +726,9 @@
+     if cpu.endswith("86") or (cpu.startswith("i") and "86" in cpu):
+         canonical_cpu = "x86"
+         endianness = "little"
++    elif cpu in ("loongarch64"):
++        canonical_cpu = "loongarch"
++        endianness = "little"
+     elif cpu in ("x86_64", "ia64"):
+         canonical_cpu = cpu
+         endianness = "little"
+```
+
+#### 增加loongnix-server的支持
+
+*   相关diff如下
+
+```diff
+diff -r f21620428eb7 python/mozboot/mozboot/bootstrap.py
+--- a/python/mozboot/mozboot/bootstrap.py       Thu Sep 15 17:24:46 2022 +0200
++++ b/python/mozboot/mozboot/bootstrap.py       Mon Apr 17 12:46:11 2023 +0800
+@@ -164,7 +164,7 @@
+                 full_distribution_name=False
+             )
+
+-            if dist_id in ("centos", "fedora", "rocky"):
++            if dist_id in ("centos", "fedora", "rocky", "loongnix-server"):
+                 cls = CentOSFedoraBootstrapper
+                 args["distro"] = dist_id
+             elif dist_id in DEBIAN_DISTROS:
+```
+
+*   注意。这里我移除了一些额外的东西
+
+```diff
+diff -r f21620428eb7 python/mozboot/mozboot/centosfedora.py
+--- a/python/mozboot/mozboot/centosfedora.py    Thu Sep 15 17:24:46 2022 +0200
++++ b/python/mozboot/mozboot/centosfedora.py    Mon Apr 17 12:46:11 2023 +0800
+@@ -31,10 +31,9 @@
+             # Development group.
+             "libstdc++-static",
+             "libXt-devel",
+-            "nasm",
+             "pulseaudio-libs-devel",
+             "gcc-c++",
+-        ]
++        ]# I removed nasm here --XYL
+
+         self.mobile_android_packages = [
+             "java-1.8.0-openjdk-devel",
+@@ -42,10 +41,10 @@
+             "wget",
+         ]
+
+-        if self.distro in ("centos", "rocky"):
+-            self.group_packages += ["Development Tools"]
++        if self.distro in ("centos", "rocky", "loongnix-server"):
++            self.group_packages += ["Development Tools"] # <-- Depends on this  --XYL
+
+-            self.packages += ["curl-devel"]
++            self.packages += ["curl-devel"]
+
+             self.browser_packages += ["gtk3-devel"]
+
+@@ -58,7 +57,7 @@
+                 self.packages += ["npm"]
+
+             else:
+-                self.packages += ["redhat-rpm-config"]
++        #        self.packages += ["redhat-rpm-config"] # loongnix-server does not contain this --XYL
+
+                 self.browser_group_packages = ["Development Tools"]
+
+@@ -69,7 +68,7 @@
+
+             self.mobile_android_packages += ["ncurses-compat-libs"]
+
+-        if self.distro in ("centos", "rocky") and self.version == 8:
++        if self.distro in ("centos", "rocky", "loongnix-server") and self.version == 8: # for loongnix-server the version is 8
+             self.packages += ["python3-devel"]
+         else:
+             self.packages += ["python-devel"]
+```
+
+#### 开始bootstrap
+
+*   至此，bootstrap脚本应当可以启动
+*   `./mach bootstrap` 应当可以进行到“Please choose the version of Firefox you want to build”
+    *   如果是release版的源码，再往后就会报“Could not identify the root directory of your checkout”
