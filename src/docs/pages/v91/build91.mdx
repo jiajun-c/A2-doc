@@ -6,7 +6,7 @@
 
 *   可以用HG或者从[RELEASE](https://archive.mozilla.org/pub/thunderbird/releases/)里下载
     *   据林润泽说，HG克隆的会有奇怪的问题
-        *   但荀阳霖总是会在release版遇到“mach.util.UserError: Could not identify the root directory of your checkout! Are you running \`mach bootstrap\` in an hg or git clone?”
+        
 
 #### 2.更新autoconf，并增加LA的CPU标记
 
@@ -129,3 +129,11 @@ diff -r f21620428eb7 python/mozboot/mozboot/centosfedora.py
 *   至此，bootstrap脚本应当可以启动
 *   `./mach bootstrap` 应当可以进行到“Please choose the version of Firefox you want to build”
     *   如果是release版的源码，再往后就会报“Could not identify the root directory of your checkout”
+    *   ↑这是因为来自tar包的源码不能用`./mach bootstrap`。 应当直接 `mkdir obj && cd obj && ../configure && make && make install`
+
+
+
+
+#### 额外安装的包
+*  yum包
+   * clang clang-devel clang-tools-extra llvm-devel llvm-static  compiler-rt
