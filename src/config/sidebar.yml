@@ -8,3 +8,5 @@
       link: '/pages/latest'
     - label: '91版测试'
       link: '/pages/v91/build91'
+    - label: '依赖调整'
+      link: '/pages/dep/dep'
