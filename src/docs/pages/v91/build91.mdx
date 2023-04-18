@@ -160,6 +160,7 @@ directory = "@top_srcdir@/@VENDORED_DIRECTORY@"
 *  修改build/workspace-hack/Cargo.toml  把libc的版本改成0.2.141
 *  手动运行一次`/root/.rustup/toolchains/stable-loongarch64-unknown-linux-gnu/bin/cargo rustc  --release  --manifest-path /home/moz91.9.1fromREL/thunderbird-91.9.1/toolkit/library/rust/Cargo.toml -vv --lib --target=loongarch64-unknown-linux-gnu --features 'quantum_render webgpu cubeb_pulse_rust cubeb-remoting moz_memory moz_places remote_agent glean_with_gecko glean_disable_upload with_dbus' --  -Clto` 直到所有东西下载完成，即可Ctrl+C   
    *    这个指令在原始指令的基础上去除了frozen。允许cargo不使用in-tree的依赖代码。这样可能在将来造成问题，但现在还没看出啥
+*  向本地的authenticator-rs库增加https://github.com/mozilla/authenticator-rs/pull/207/    注：截止2023年4月18日，这个并没有被合并进去，所以需要手动添加
 
 
 #### 额外安装的包
