@@ -131,7 +131,35 @@ diff -r f21620428eb7 python/mozboot/mozboot/centosfedora.py
     *   如果是release版的源码，再往后就会报“Could not identify the root directory of your checkout”
     *   ↑这是因为来自tar包的源码不能用`./mach bootstrap`。 应当直接 `mkdir obj && cd obj && ../configure && make && make install`
 
+#### 开始build
+*  修改/servo/components/hashglobe/src/alloc.rs 增加`target_arch = "loongarch64",`到mips64那行的下面
+*  清空源码目录下./.cargo/config.in 然后用以下内容替换
+```toml
 
+# Take advantage of the fact that cargo will treat lines starting with #
+# as comments to add preprocessing directives. This file can thus by copied
+# as-is to $topsrcdir/.cargo/config with no preprocessing to be used there
+# (for e.g. independent tasks building rust code), or be preprocessed by
+# the build system to produce a .cargo/config with the right content.
+#define REPLACE_NAME vendored-sources
+#define VENDORED_DIRECTORY third_party/rust
+# We explicitly exclude the following section when preprocessing because
+# it would overlap with the preprocessed [source."@REPLACE_NAME@"], and
+# cargo would fail.
+#ifndef REPLACE_NAME
+[source.vendored-sources]
+directory = "third_party/rust"
+#endif
+
+# Thankfully, @REPLACE_NAME@ is unlikely to be a legitimate source, so
+# cargo will ignore it when it's here verbatim.
+#filter substitution
+[source."@REPLACE_NAME@"]
+directory = "@top_srcdir@/@VENDORED_DIRECTORY@"
+```
+*  修改build/workspace-hack/Cargo.toml  把libc的版本改成0.2.141
+*  手动运行一次`/root/.rustup/toolchains/stable-loongarch64-unknown-linux-gnu/bin/cargo rustc  --release  --manifest-path /home/moz91.9.1fromREL/thunderbird-91.9.1/toolkit/library/rust/Cargo.toml -vv --lib --target=loongarch64-unknown-linux-gnu --features 'quantum_render webgpu cubeb_pulse_rust cubeb-remoting moz_memory moz_places remote_agent glean_with_gecko glean_disable_upload with_dbus' --  -Clto` 直到所有东西下载完成，即可Ctrl+C   
+   *    这个指令在原始指令的基础上去除了frozen。允许cargo不使用in-tree的依赖代码。这样可能在将来造成问题，但现在还没看出啥
 
 
 #### 额外安装的包
