@@ -163,6 +163,11 @@ directory = "@top_srcdir@/@VENDORED_DIRECTORY@"
 *  向本地的authenticator-rs库增加https://github.com/mozilla/authenticator-rs/pull/207/    注：截止2023年4月18日，这个并没有被合并进去，所以需要手动添加
 *  给nspr打补丁，见[THIS](https://hg.mozilla.org/projects/nspr/rev/935cb7d70045c6aff422537733c83565b8a617b6)
 *  给mbft/double-conversion打补丁，见[THIS](https://github.com/google/double-conversion/pull/162/files)
+*  给chromium/src/build/build_config.h打补丁，见Add-loongarch64-support-to-Thunderbird.patch
+*  给js/src/jit/AtomicOperations.h打补丁，同上
+   *   我先忽略了thunderbird-68.7.0/js/src/old-configure.in
+*  memory/build/mozjemalloc.cpp、python/mozbuild/mozbuild/test/configure/test_toolchain_configure.py、security/nss/coreconf/config.gypi   
+*  xpcom那一堆，也是见Add-loongarch64-support-to-Thunderbird.patch
 
 
 #### 额外安装的包
