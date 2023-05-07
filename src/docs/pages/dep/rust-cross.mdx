@@ -52,5 +52,6 @@ experimental-targets = ""
 
 ### 3.开始编译
 *   `./x build`
+    *  如果在编译llvm阶段找不到_POSIX_ARG_MAX，就手动替换成4096.懒得找根本原因了。。。
 *   `./x dist`
 *   在build/dist里获取打包好的安装文件，选择`rust-<版本号>`开头的那个压缩包即可
