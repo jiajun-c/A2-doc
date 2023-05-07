@@ -1,0 +1,56 @@
+# 交叉编译新版本rustc
+
+### 0.准备工作
+*   本机需要安装`ninja`
+*   在远程机上（或者直接去仓库下载解压rpm也行）。下载安装`openssl-devel`、~~`libstdc++-devel`~~、`glibc-devel`。把相关的so拷贝到交叉工具链的sysroot里对应的位置
+*   需要准备x86到LoongArch旧世界的交叉工具链，并且在的sysroot里额外准备好`lib64/pkgconfig` （从远程机上下一份就行）
+*   本机需要安装一份夜版的rustc
+
+### 1.获得可用源码镜像
+*   直接从仓库克隆即可  `git clone --depth=1 https://github.com/rust-lang/rust` 
+*   然后`cd rust && git submodule update --init`
+
+### 2.修改配置文件
+*   在源码树的根目录创建或修改`config.toml`，内容如下
+```toml
+changelog-seen = 2
+[build]
+docs = false
+host = ["loongarch64-unknown-linux-gnu"]
+target = ["loongarch64-unknown-linux-gnu","x86_64-unknown-linux-gnu"]
+
+#nightly build must be used
+rustc = "/home/coa/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc"
+cargo = "/home/coa/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo"
+rustfmt = "/home/coa/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustfmt"
+
+# Enable a build of the extended Rust tool set which is not only the compiler
+# but also tools such as Cargo. 
+extended = true
+# Turn this off if you just want rustc -- CoA
+
+tools = [    
+   "cargo",    
+   "clippy",    # I doubt if we need this three... -- CoA
+   "rust-analyzer",
+   "analysis",
+]
+
+[target.loongarch64-unknown-linux-gnu]  # Change this if you need. (obviously) -- CoA
+cc = "/home/coa/CROSS/opt/cross/bin/loongarch64-unknown-linux-gnu-gcc"
+cxx = "/home/coa/CROSS/opt/cross/bin/loongarch64-unknown-linux-gnu-g++"
+ar = "/home/coa/CROSS/opt/cross/bin/loongarch64-unknown-linux-gnu-ar"
+ranlib = "/home/coa/CROSS/opt/cross/bin/loongarch64-unknown-linux-gnu-ranlib"
+linker = "/home/coa/CROSS/opt/cross/bin/loongarch64-unknown-linux-gnu-gcc"
+
+
+[llvm]
+download-ci-llvm = false
+targets = "LoongArch;X86"  # This will save a lot of time   -- CoA
+experimental-targets = ""  
+```
+
+### 3.开始编译
+*   `./x build`
+*   `./x dist`
+*   在build/dist里获取打包好的安装文件，选择`rust-<版本号>`开头的那个压缩包即可
