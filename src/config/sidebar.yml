@@ -11,6 +11,6 @@
 - label: '依赖调整与准备'
   items:
     - label: 'rustc'
-      link: '/pages/dep/rust-cross
+      link: '/pages/dep/rust-cross'
     - label: '杂项调整'
       link: '/pages/dep/dep'
