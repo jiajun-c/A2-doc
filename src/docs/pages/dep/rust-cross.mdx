@@ -2,9 +2,9 @@
 
 ### 0.准备工作
 *   本机需要安装`ninja`
-*   在远程机上（或者直接去仓库下载解压rpm也行）。下载安装`openssl-devel`、~~`libstdc++-devel`~~、`glibc-devel`。把相关的so拷贝到交叉工具链的sysroot里对应的位置
-*   需要准备x86到LoongArch旧世界的交叉工具链，并且在的sysroot里额外准备好`lib64/pkgconfig` （从远程机上下一份就行）
-*   本机需要安装一份夜版的rustc
+*   在远程机上,下载安装`openssl-devel`、~~`libstdc++-devel`~~、`glibc-devel`。
+*   需要准备x86到LoongArch旧世界的交叉工具链，但这个编译时很容易缺依赖，你可以用CoA打包的交叉编译工具链。里面补足了rust所需要的库
+*   本机需要安装一份夜版的rustc。建议在克隆仓库的同一天更新一次。
 
 ### 1.获得可用源码镜像
 *   直接从仓库克隆即可  `git clone --depth=1 https://github.com/rust-lang/rust` 
@@ -31,7 +31,7 @@ extended = true
 
 tools = [    
    "cargo",    
-   "clippy",    # I doubt if we need this three... -- CoA
+   "clippy",    # I doubt if we need those three... -- CoA
    "rust-analyzer",
    "analysis",
 ]
@@ -49,8 +49,17 @@ download-ci-llvm = false
 targets = "LoongArch;X86"  # This will save a lot of time   -- CoA
 experimental-targets = ""  
 ```
+### 3.打补丁
+#### 1.Cargo
+*   在src/tools/cargo/Cargo.toml末尾，增加
+```toml
+[patch.crates-io]
+rustix = { git = 'https://github.com/FurryAcetylCoA/rustix.git' }  #这个补丁用了一个挺脏的方式，将来要想办法解决，才能合并主线，但现在我仅仅是让他能通过编译。详询CoA，这里地方太小，写不下
+```
+*   然后在同一个文件夹下运行`cargo update -p rustix`
 
-### 3.开始编译
+
+### 4.开始编译
 *   `./x build`
     *  如果在编译llvm阶段找不到_POSIX_ARG_MAX，就手动替换成4096.懒得找根本原因了。。。
 *   `./x dist`
