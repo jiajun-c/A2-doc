@@ -19,7 +19,7 @@ module.exports = {
         docsPath: `src/docs`,
         yamlFilesPath: `src/yamlFiles`,
         repositoryUrl: `https://github.com/jiajun-c/A2-doc`,
-        baseDir: `examples/gatsby-theme-docs`,
+        baseDir: ``,
         gatsbyRemarkPlugins: [],
       },
     },
