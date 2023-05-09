@@ -18,7 +18,7 @@ module.exports = {
         configPath: `src/config`,
         docsPath: `src/docs`,
         yamlFilesPath: `src/yamlFiles`,
-        repositoryUrl: `https://github.com/jpedroschmitz/rocketdocs`,
+        repositoryUrl: `https://github.com/jiajun-c/A2-doc`,
         baseDir: `examples/gatsby-theme-docs`,
         gatsbyRemarkPlugins: [],
       },
