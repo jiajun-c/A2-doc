@@ -46,6 +46,7 @@ linker = "/home/coa/CROSS/opt/cross/bin/loongarch64-unknown-linux-gnu-gcc"
 
 [llvm]
 download-ci-llvm = false
+ccache = true  # 除非你确信真的只需要编译一次，将来也不打算换个rustc版本再试。否则最好还是保持打开的好
 targets = "LoongArch;X86"  # This will save a lot of time   -- CoA
 experimental-targets = ""  
 ```
