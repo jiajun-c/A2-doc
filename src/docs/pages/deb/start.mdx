@@ -62,3 +62,22 @@ override_dh_auto_install:
 
 在设置了这些还需要设置`debian/hithere.dirs`来创建我们需要的目录
 
+```shell
+usr/bin
+usr/share/man/man1
+```
+
+## 3. 生成deb文件
+
+```shell
+debuild -us -uc
+```
+
+随后在这个包的上层文件夹就能看到这个deb包，然后使用`dpkg -i`进行安装
+
+## 4. 效果
+
+```shell
+root@d0af19a493d4:~# hithere 
+Hi there!
+```
