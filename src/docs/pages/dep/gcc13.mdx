@@ -16,7 +16,7 @@
    export BUILD64="-mabi=${MABI}"
    export LD_LIBRARY_PATH="${SYSDIR}/lib:${SYSDIR}/${TARGET}/lib"
    export PATH=${SYSDIR}/bin:${PATH}
-   #export LD_LIBRARY_PATH=${SYSDIR}/libexec/gcc/${TARGET}/13.1.0
+   #export LD_LIBRARY_PATH=${SYSDIR}/libexec/gcc/${TARGET}/13.1.0:${LD_LIBRARY_PATH}
 
    unset CFLAGS
    unset CXXFLAGS
