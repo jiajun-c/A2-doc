@@ -28,7 +28,6 @@ rustfmt = "/home/coa/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rus
 # but also tools such as Cargo. 
 extended = true
 # Turn this off if you just want rustc -- CoA
-
 tools = [    
    "cargo",    
    "clippy",    # I doubt if we need those three... -- CoA
@@ -43,12 +42,18 @@ ar = "/home/coa/CROSS/opt/cross/bin/loongarch64-unknown-linux-gnu-ar"
 ranlib = "/home/coa/CROSS/opt/cross/bin/loongarch64-unknown-linux-gnu-ranlib"
 linker = "/home/coa/CROSS/opt/cross/bin/loongarch64-unknown-linux-gnu-gcc"
 
+[rust]
+dist-src = false
 
 [llvm]
 download-ci-llvm = false
 ccache = true  # 除非你确信真的只需要编译一次，将来也不打算换个rustc版本再试。否则最好还是保持打开的好
 targets = "LoongArch;X86"  # This will save a lot of time   -- CoA
 experimental-targets = ""  
+
+[dist]
+src-tarball = false
+compression-formats = ["xz"]
 ```
 ### 3.打补丁
 #### 1.Cargo
