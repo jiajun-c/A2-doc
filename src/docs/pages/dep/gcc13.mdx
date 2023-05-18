@@ -52,8 +52,8 @@ exec as.real ${tmpcmd}
 *   （这个不要写进正式文档） 编辑`./contrib/download_prerequisites`。修改35行为`base_url='https://cors.acetylcoa.tech/http://gcc.gnu.org/pub/gcc/infrastructure/'`
 *   ./contrib/download_prerequisites
 *   更新`gmp` `mpfr` `mpc` `isl`的`config.sub`与`config.guess`
-*   * 注意！对于`gmp` 要替换的是`configfsf.sub`与`configfsf.guess`
-*   * 注意！对于`mpc`这俩文件在`build-aux`子文件夹下
+    * 注意！对于`gmp` 要替换的是`configfsf.sub`与`configfsf.guess`
+    * 注意！对于`mpc`这俩文件在`build-aux`子文件夹下
 *   回到buildL文件夹中`../configure --prefix=${SYSDIR} --target=${TARGET} --enable-languages=c,c++ --disable-multilib --disable-libsanitizer`
 *   `make -j4 all-gcc` 然后`make -j8 install-gcc`
 *   `ln -s /lib64/ld-2.28.so /lib64/ld-linux-loongarch-lp64d.so.1`
