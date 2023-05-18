@@ -16,6 +16,7 @@
    export BUILD64="-mabi=${MABI}"
    export LD_LIBRARY_PATH="${SYSDIR}/lib:${SYSDIR}/${TARGET}/lib"
    export PATH=${SYSDIR}/bin:${PATH}
+   #export LD_LIBRARY_PATH=${SYSDIR}/libexec/gcc/${TARGET}/13.1.0
 
    unset CFLAGS
    unset CXXFLAGS
@@ -57,3 +58,4 @@ exec as.real ${tmpcmd}
 *   `make -j4 all-gcc` 然后`make -j8 install-gcc`
 *   `ln -s /lib64/ld-2.28.so /lib64/ld-linux-loongarch-lp64d.so.1`
 *   执行`LD_LIBRARY_PATH=/opt/gcc13/libexec/gcc/loongarch64-unknown-linux-gnu/13.1.0` 并把这一句加到`gccSource.sh`里（也许加LD_RUN_PATH会更好）
+*  `make -j4`   `make install -j8`
