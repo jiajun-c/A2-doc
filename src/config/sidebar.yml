@@ -17,7 +17,7 @@
     - label: '杂项调整'
       link: '/pages/dep/dep'
 - label: 'deb打包'
-  item:
+  items:
     - label: 'deb打包入门'
       link: '/pages/deb/start'
     - label: '为thunderbird打包deb包'
