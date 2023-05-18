@@ -16,3 +16,9 @@
       link: '/pages/dep/gcc13'
     - label: '杂项调整'
       link: '/pages/dep/dep'
+- label: 'deb打包'
+  item:
+    - label: 'deb打包入门'
+      link: '/pages/deb/start'
+    - label: '为thunderbird打包deb包'
+      link: '/pages/deb/thunderbird'

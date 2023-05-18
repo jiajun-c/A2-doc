@@ -1,0 +1,64 @@
+# deb打包入门
+
+## 1. 开发环境配置
+
+如果你使用的发行版不是deb系，那么此时可以使用docker环境进行开发
+
+```cpp
+apt install build-essential
+apt install devscripts debhelper
+```
+
+[hithere源码](https://wiki.debian.org/Packaging/Intro?action=AttachFile&do=view&target=hithere-1.0.tar.gz) 
+
+解压后得到的目录如下
+
+```shell
+hithere-1.0
+├── hithere.1
+├── hithere.c
+└── Makefile
+```
+
+使用`dh_make` 生成deb所需要的debian目录
+
+## 2. debian打包文件
+
+### 2.1 control
+
+默认的打包文件如下所示
+```shell
+Source: hithere
+Section: unknown
+Priority: optional
+Maintainer: unknown <bot@unknown>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/hithere
+#Vcs-Git: https://salsa.debian.org/debian/hithere.git
+Rules-Requires-Root: no
+
+Package: hithere
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+```
+
+### 2.2 Rules
+
+`rules`文件的作用和`Makefile`相同，其中设置的target也就是make的target
+
+要使得包被安装到正确的位置，我们还需要设置`dh_auto_install`。
+```shell
+#!/usr/bin/make -f
+%:
+        dh $@
+
+override_dh_auto_install:
+        $(MAKE) DESTDIR=$$(pwd)/debian/hithere prefix=/usr install
+```
+
+在设置了这些还需要设置`debian/hithere.dirs`来创建我们需要的目录
+
