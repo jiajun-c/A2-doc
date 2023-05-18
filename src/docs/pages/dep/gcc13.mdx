@@ -25,7 +25,7 @@
 ## 1.Binutils
 *   source一下刚刚的文件
 *   克隆：`git clone --depth=1 https://github.com/bminor/binutils-gdb/  --branch=gdb-13.1-release `
-*   进入`binutils-gdb` 新建`buildL`文件夹
+*   进入`binutils-gdb` 新建`buildL`文件夹。并cd进去
 *   `../configure --prefix=${SYSDIR}  --target=${TARGET} --disable-gdb  --disable-multilib --disable-werror  --disable-static`
 *   `make -j4`
 *   `make install -j4`
