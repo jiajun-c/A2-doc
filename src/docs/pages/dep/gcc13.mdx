@@ -59,3 +59,10 @@ exec as.real ${tmpcmd}
 *   `ln -s /lib64/ld-2.28.so /lib64/ld-linux-loongarch-lp64d.so.1`
 *  去除`gccSource.sh`里最后两个注释。然后重新`. ./gccSource.sh`
 *  `make -j4`   `make install -j8`
+
+
+## 99.未来计划
+*  也许应该给一下`-mlsx -mlasx`参数以开启向量支持
+*  使用[lonngnix提供的](http://www.loongnix.cn/zh/toolchain/GNU/)，有向量支持的glibc代码来代替直接从机器里拷贝现成二进制文件。虽然我感觉直接从服务器上复制来的那些应该是带向量支持的
+*  我从来没有验证过这个GCC13.1和自带的GCC8.1相比，到底有没有提示。也许有闲情逸致可以跑一下SPEC测试
+   *   见https://www.163.com/dy/article/GGVJG67E05528NB7.html
