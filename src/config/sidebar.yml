@@ -22,3 +22,7 @@
       link: '/pages/deb/start'
     - label: '为thunderbird打包deb包'
       link: '/pages/deb/thunderbird'
+- label: 'Thunderbird'
+  items:
+    -label: 'Thunderbird'
+     link: '/pages/thunderbird'
