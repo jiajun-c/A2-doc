@@ -1,0 +1,20 @@
+## 安装Nodejs
+
+* yum仓库里自带的版本太老。我们使用loongnix[提供的](http://www.loongnix.cn/zh/api/nodejs/)Nodejs
+
+### 安装方法
+
+1.  wget -c http://ftp.loongnix.cn/nodejs/npm-registry/LoongArch/abi-v1.0/nvm/nvm-0.39.1.tar.gz   #截止2023年5月22日，loongnix提供的最新nvm为0.39.1
+2.  x nvm-0.39.1.tar.gz
+3.  export NVM_DIR="$HOME/.nvm"
+4.  mv nvm-0.39.1 ${NVM_DIR}
+5.  bash $NVM_DIR/nvm.sh
+6.  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+7.  nvm install 18.13.0    #截止2023年5月22日，loongnix提供的最新nodejs为18.13.0 对于编译雷鸟已经足够
+8.  编写`nodejsSource.sh` 参考如下
+```bash
+#!/bin/bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+```
+以后使用时，通过`. ./nodejsSource.sh` 即可导入
