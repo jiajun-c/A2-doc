@@ -2,7 +2,7 @@
 
 ## 0.准备工作
 *    这里的就地指的是在LA上
-*    安装`texinfo`与`bison`与`flex`与`readline-devel`
+*    安装`texinfo`与`bison`与`flex`与`readline-devel`与`rpm-devel`
 *    准备`gccSource.sh`内容如下
 
 ```sh
@@ -26,7 +26,7 @@
 *   source一下刚刚的文件
 *   克隆：`git clone --depth=1 https://github.com/bminor/binutils-gdb/  --branch=gdb-13.1-release `
 *   进入`binutils-gdb` 新建`buildL`文件夹。并cd进去
-*   `../configure --prefix=${SYSDIR}  --target=${TARGET} --disable-gdb  --disable-multilib --disable-werror  --disable-static`
+*   `../configure --prefix=${SYSDIR}  --target=${TARGET} --disable-gdb  --disable-multilib --disable-werror  --disable-static`  
 *   `make -j4`
 *   `make install -j4`
 *   cd到`${SYSDIR}/bin`
@@ -60,6 +60,8 @@ exec as.real ${tmpcmd}
 *  去除`gccSource.sh`里最后两个注释。然后重新`. ./gccSource.sh`
 *  `make -j4`   `make install -j8`
 
+## 4.GDB
+*  如果需要gdb。请在步骤1.binutils的configure步骤中。去除`--disable-gdb`
 
 ## 99.未来计划
 *  也许应该给一下`-mlsx -mlasx`参数以开启向量支持
