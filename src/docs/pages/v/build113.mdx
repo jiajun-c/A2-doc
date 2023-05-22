@@ -31,8 +31,8 @@
 *   移除顶层Cargo.lock中的`checksum = "bfdda3d196821d6af13126e40375cdf7da646a96114af134d5f417a9a1dc8e1a"` 行
 *   注解：这里面存在一个问题。因为alsa0.7这个项目要求nix必须是^0.24版本的。然后alsa的版本又被midir锁定了。截止2023年5月6日，alsa没有更新的版本了。其实就算alsa有更新的版本，也没法马上就用，因为Mozilla用的midir是他们自己fork的。得再多提交两个pr才行。Mozilla树内的nix用了一个比较曲折的方法来避免这个问题 alsa项目那边有人在提升级的事情了。
 *   TODO:
-  *   对应的[PR](https://github.com/nix-rust/nix/pull/2023)好像被遗忘了。我们需要跟进一下，可能需要再提一个，但配上更多的说明
-  *   关于Alsa的升级。可以跟一下这个[PR](https://github.com/diwic/alsa-rs/pull/99)
+     *   对应的[PR](https://github.com/nix-rust/nix/pull/2023)好像被遗忘了。我们需要跟进一下，可能需要再提一个，但配上更多的说明
+     *   关于Alsa的升级。可以跟一下这个[PR](https://github.com/diwic/alsa-rs/pull/99)
 
 #### third_party/rust/cty
 *   摘樱桃[github](https://github.com/japaric/cty/pull/23/files)
@@ -48,8 +48,8 @@
 *   注：目录结构改了。找不到的文件去`src/transport`看看
 *   参照nix的方式，修改checksum与顶层lock
 *   TODO：
-  *   研究一下能不能升级这整一个crate的版本（会不会需要改其他的部分）
-  *   如果上一条可行，提一个PR
+     *   研究一下能不能升级这整一个crate的版本（会不会需要改其他的部分）
+     *   如果上一条可行，提一个PR
 
 #### third_party/libwebrtc/build/build_config.h
 *   在合适的位置(判断体系的那个#else上面)添加以下代码
@@ -89,10 +89,10 @@ unset MOZ_TELEMETRY_REPORTING
 #### 5.编译
 *   注:编译会耗费几乎20个小时，建议挂个tmux或者screen防止掉线（开了这俩后需要重新source)
 *   不使用mach
-  *   `mkdir buildL && cd buildL && ../configure && make -j6 -l4.7`
-  *   编译好的二进制文件在`buildL/dist/bin`中
+    *   `mkdir buildL && cd buildL && ../configure && make -j6 -l4.7`
+    *   编译好的二进制文件在`buildL/dist/bin`中
 *   使用mach (没测试过)
-  *   `./mach configure && ./mach build` 
-  *   `./mach package && ./mach ./mach build installers-zh-CN`
-*       编译好的东西在`obj-loongarch64-unknown-linux-gnu/dist/`中
-*       应当可以使用`MOZ_OBJDIR`环境变量来修改编译结果文件夹
+    *   `./mach configure && ./mach build` 
+    *   `./mach package && ./mach ./mach build installers-zh-CN`
+    *   编译好的东西在`obj-loongarch64-unknown-linux-gnu/dist/`中
+    *   应当可以使用`MOZ_OBJDIR`环境变量来修改编译结果文件夹
