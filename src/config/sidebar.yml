@@ -14,6 +14,8 @@
       link: '/pages/dep/rust-cross'
     - label: 'gcc13'
       link: '/pages/dep/gcc13'
+    - label: 'nodejs'
+      link: '/pages/dep/nodejs'
     - label: '杂项调整'
       link: '/pages/dep/dep'
 - label: 'deb打包'
