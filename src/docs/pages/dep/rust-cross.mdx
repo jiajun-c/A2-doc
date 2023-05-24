@@ -1,5 +1,9 @@
 # 交叉编译新版本rustc
 
+## 2023年5月24日重要更新
+*  Loongarch已于今天进入Tier2。从5-25日开始，原版的rustup将提供nightly版的原生Loongarch rust工具链。从rust1.71开始，rustup将提供stable版本的原生Loongarch rust工具链
+*  如果没有撞上新旧世界的问题，那我们应该可以直接下载使用，而不再需要交叉编译
+
 ### 0.准备工作
 *   本机需要安装`ninja`
 *   在远程机上,下载安装`openssl-devel`、~~`libstdc++-devel`~~、`glibc-devel`。
