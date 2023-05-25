@@ -1,8 +1,9 @@
 # 交叉编译新版本rustc
 
 ## 2023年5月24日重要更新
-*  Loongarch已于今天进入Tier2。从5-25日开始，原版的rustup将提供nightly版的原生Loongarch rust工具链。从rust1.71开始，rustup将提供stable版本的原生Loongarch rust工具链
+*  Loongarch已于24日进入Tier2。从5-25日开始，原版的rustup将提供nightly版的原生Loongarch rust工具链。从rust1.71开始，rustup将提供stable版本的原生Loongarch rust工具链
 *  如果没有撞上新旧世界的问题，那我们应该可以直接下载使用，而不再需要交叉编译
+   *  注：撞上了，不可避免地
 
 ### 0.准备工作
 *   本机需要安装`ninja`
@@ -59,14 +60,15 @@ experimental-targets = ""
 src-tarball = false
 compression-formats = ["xz"]
 ```
-### 3.打补丁
-#### 1.Cargo
-*   在src/tools/cargo/Cargo.toml末尾，增加
+~~### 3.打补丁~~
+~~#### 1.Cargo~~
+~~*   在src/tools/cargo/Cargo.toml末尾，增加~~
 ```toml
 [patch.crates-io]
-rustix = { git = 'https://github.com/FurryAcetylCoA/rustix.git' }  #这个补丁用了一个挺脏的方式，将来要想办法解决，才能合并主线，但现在我仅仅是让他能通过编译。详询CoA，这里地方太小，写不下
+rustix = { git = 'https://github.com/FurryAcetylCoA/rustix.git' }  #这个库我已经删了
 ```
-*   然后在同一个文件夹下运行`cargo update -p rustix`
+~~*   然后在同一个文件夹下运行`cargo update -p rustix`~~
+  * 随着cargo/12098的进入，这个操作已不再需要
 
 
 ### 4.开始编译
