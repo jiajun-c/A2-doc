@@ -21,9 +21,9 @@ changelog-seen = 2
 [build]
 docs = false
 host = ["loongarch64-unknown-linux-gnu"]
-target = ["loongarch64-unknown-linux-gnu","x86_64-unknown-linux-gnu"]
+target = ["loongarch64-unknown-linux-gnu","x86_64-unknown-linux-gnu"] #后面那个可以去掉
 
-#nightly build must be used
+#从2023年5月25日开始，很可能不需要用夜版来bootstrap了，但我没试过
 rustc = "/home/coa/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc"
 cargo = "/home/coa/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo"
 rustfmt = "/home/coa/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustfmt"
@@ -35,10 +35,7 @@ build-stage = 2
 extended = true
 # Turn this off if you just want rustc -- CoA
 tools = [    
-   "cargo",    
-   "clippy",    # I doubt if we need those three... -- CoA
-   "rust-analyzer",
-   "analysis",
+   "cargo"
 ]
 
 [target.loongarch64-unknown-linux-gnu]  # Change this if you need. (obviously) -- CoA
