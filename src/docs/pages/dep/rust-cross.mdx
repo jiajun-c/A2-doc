@@ -76,3 +76,18 @@ rustix = { git = 'https://github.com/FurryAcetylCoA/rustix.git' }  #这个库我
     *  如果在编译llvm阶段找不到_POSIX_ARG_MAX，就手动替换成4096.懒得找根本原因了。。。
 *   `./x dist`
 *   在build/dist里获取打包好的安装文件，选择`rust-<版本号>`开头的那个压缩包即可
+
+### 98.附加说明
+*   尽管loongnix也提供了一个较新的rust编译器(1.65)。但经过代码对比(横向+纵向)后发现，它里面的修改仅仅是让编译器跑起来。并没有任何架构特定的优化。在主线这边。现在的版本增加了不少龙芯特定的优化。
+      *  所以，我们使用自己编译的rustc是有意义的
+
+###99.未来计划
+*  在LLD的龙芯支持完成后。我想让rustc在编译的时候使用LLD。预期会显著提升编译速度。这需要我们搞清楚，rustc在编译时制作的那份llvm会多大程度影响运行期的rustc
+*  以这份rustc为bootstrap，在LA上本地编译一份rustc。调整更多编译选项，如：
+   * 使用clang与llvm套件作为编译工具，于`[target.loongarch64-unknown-linux-gnu]`
+      * todo:llvm-filecheck编译时需要专门的选项开启吗？(codegen-tests = false 可以免除这个需求)
+   * 指定rpath于链接器flags
+   * 开启 `use-lld`
+   * jemalloc ？
+   * lto=thin? (有龙芯支持吗)
+   * `prefix`
