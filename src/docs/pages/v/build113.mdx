@@ -1,7 +1,7 @@
 113.0b6版编译
 -----
 ### 0.环境准备
-*   yum安装python39.并使用`alternatives --config python3`切换默认的python为python39
+*   ~~yum安装python39.并使用`alternatives --config python3`切换默认的python为python39~~ python37以上就可以了
 *   yum install pango-devel libXrandr-devel libICE-devel  libSM-devel gtk+-devel gtk3-devel dbus-glib-devel libevent-devel libvpx-devel nspr-devel nss-devel pixman-devel
 *   参照，文档内关于安装nodejs的方式。安装nodejs
 *   `pip3.9 install mozprocess jsmin manifestparser alsa-lib-devel`
@@ -9,7 +9,7 @@
 *   参照，文档内关于安装gcc的方式。安装新版gcc。并source
 *   参照，文档内关于安装llvm的方式。安装新版llvm。并source
 *   `cargo install cbindgen`
-*   增加虚拟内存，使得 物理内存+虚拟内存 >=
+*   增加虚拟内存，使得 物理内存+虚拟内存 >=7.5G
 
 ### 1.获取可用源码镜像
 *   从[RELEASE](https://archive.mozilla.org/pub/thunderbird/releases/)里下载
