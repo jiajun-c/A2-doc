@@ -9,7 +9,7 @@
 ## 1.编译安装
 *    `git clone --depth 1 https://github.com/llvm/llvm-project.git && cd llvm-project`
 *    source一下`gcc13Source.sh`
-*    `cmake -S llvm -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/llvm16   -DCMAKE_C_COMPILER=/opt/gcc13/bin/gcc -DCMAKE_CXX_COMPILER=/opt/gcc13/bin/g++ -DLLVM_TARGETS_TO_BUILD="host" -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_FFI:BOOL=ON -DLLVM_ENABLE_RTTI:BOOL=ON  -DLLVM_INSTALL_UTILS:BOOL=ON -DLLVM_BUILD_LLVM_DYLIB:BOOL=ON -DLLVM_LINK_LLVM_DYLIB:BOOL=ON -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF -DLLVM_ENABLE_LTO:STRING=Thin -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF -DGCC_INSTALL_PREFIX=/opt/gcc13 -DCMAKE_CXX_LINK_FLAGS="-Wl,-rpath,/opt/gcc13/lib -L/opt/gcc13/lib"`
+*    `cmake -S llvm -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/llvm16   -DCMAKE_C_COMPILER=/opt/gcc13/bin/gcc -DCMAKE_CXX_COMPILER=/opt/gcc13/bin/g++ -DLLVM_TARGETS_TO_BUILD="host" -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_FFI:BOOL=ON -DLLVM_ENABLE_RTTI:BOOL=ON  -DLLVM_INSTALL_UTILS:BOOL=ON -DLLVM_BUILD_LLVM_DYLIB:BOOL=ON -DLLVM_LINK_LLVM_DYLIB:BOOL=ON -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF  -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF -DGCC_INSTALL_PREFIX=/opt/gcc13 -DCMAKE_CXX_LINK_FLAGS="-Wl,-rpath,/opt/gcc13/lib -L/opt/gcc13/lib"`
      * 如果需要WebAssembly支持，则请添加到DLLVM_TARGETS_TO_BUILD中，并在安装llvm后手段下载wasi-sdk中的`libclang_rt.builtins-wasm32.a`
 *    ninja -C build
 *    ninja -C build install
