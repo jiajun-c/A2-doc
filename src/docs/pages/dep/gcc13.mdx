@@ -54,6 +54,7 @@ exec as.real ${tmpcmd}
 *   `ln -s /lib64/ld-2.28.so /lib64/ld-linux-loongarch-lp64d.so.1`
 *  去除`gccSource.sh`里最后两个注释。然后重新`. ./gccSource.sh`
 *  `make -j4`   `make install-strip -j8`
+*  修改`/opt/gcc13/loongarch64-unknown-linux-gnu/lib/libc.so` 最后一行增加  `AS_NEEDED ( /lib/loongarch64-linux-gnu/libdl.so.2 )`
 
 ## 3.GDB
 *  如果需要gdb。请在步骤1.binutils的configure步骤中。去除`--disable-gdb`。gmp库需要手动编译安装一下。你可以用gcc源码里面的那份
