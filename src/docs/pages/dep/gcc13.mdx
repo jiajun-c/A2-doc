@@ -7,29 +7,29 @@
 
 ```sh
    #!/bin/bash
-   export SYSDIR="/opt/gcc13"  ##这个名字很有误导性。将来换掉
+   export GCCDIR="/opt/gcc13"
    export TARGET="loongarch64-unknown-linux-gnu"
    export MABI="lp64d"
    #it can only be lp64d
    export BUILD_ARCH="-march=loongarch64"
    export BUILD_MABI="-mabi=${MABI}"
    export BUILD64="-mabi=${MABI}"
-   export LD_LIBRARY_PATH="${SYSDIR}/lib:${SYSDIR}/${TARGET}/lib"
-   export PATH=${SYSDIR}/bin:${PATH}
-   #export LD_LIBRARY_PATH=${SYSDIR}/libexec/gcc/${TARGET}/13.1.0:${LD_LIBRARY_PATH}
+   export LD_LIBRARY_PATH="${GCCDIR}/lib:${GCCDIR}/${TARGET}/lib"
+   export PATH=${GCCDIR}/bin:${PATH}
+   #export LD_LIBRARY_PATH=${GCCDIR}/libexec/gcc/${TARGET}/13.1.0:${LD_LIBRARY_PATH}
 
    unset CFLAGS
-   #export CXXFLAGS="-Wl,-rpath,${SYSDIR}/lib -L${SYSDIR}/lib" 
+   #export CXXFLAGS="-Wl,-rpath,${GCCDIR}/lib -L${GCCDIR}/lib" 
 ```
 
 ## 1.Binutils
 *   source一下刚刚的文件
 *   克隆：`git clone --depth=1 https://github.com/bminor/binutils-gdb/  --branch=gdb-13.1-release `
 *   进入`binutils-gdb` 新建`buildL`文件夹。并cd进去
-*   `../configure --prefix=${SYSDIR}  --target=${TARGET} --disable-gdb  --disable-multilib --disable-werror  --disable-static`  
+*   `../configure --prefix=${GCCDIR}  --target=${TARGET} --disable-gdb  --disable-multilib --disable-werror  --disable-static --disable-nls --disable-checking`  
 *   `make -j4`
-*   `make install -j4`
-*   cd到`${SYSDIR}/bin`
+*   `make install-strip -j4`
+*   cd到`${GCCDIR}/bin`
 *   `mv as as.real`  
 *   `vim as` 输入以下内容
 ```sh
@@ -41,30 +41,22 @@ exec as.real ${tmpcmd}
 ```
 *   `chmod +x as`
 
-## 2.Kernel Headers
-*   `cd /usr/src/kernels/4.19.0-91.82.141.2.uelc20.loongarch64`
-*    开始前patch一下 arch/loongarch/Makefile 注释14-16行(因为我们不需要 而且默认的makefile好像对这俩的规则有问题)
-*    make ARCH=loongarch INSTALL_HDR_PATH=${SYSDIR}/${TARGET} headers_install
-
-## 3.GCC 
-*   克隆:`git clone --depth=1 --branch=releases/gcc-13.1.0 https://github.com/gcc-mirror/gcc`
+## 2.GCC 
+*   克隆:`git clone --depth=1 --branch=releases/gcc-13.1.0 https://github.com/gcc-mirror/gcc --branch=releases/gcc-13.1.0`
 *   进入`gcc` 新建`buildL`文件夹
 *   （这个不要写进正式文档） 编辑`./contrib/download_prerequisites`。修改35行为`base_url='https://cors.acetylcoa.tech/http://gcc.gnu.org/pub/gcc/infrastructure/'`
 *   ./contrib/download_prerequisites
 *   更新`gmp` `mpfr` `mpc` `isl`的`config.sub`与`config.guess`
     * 注意！对于`gmp` 要替换的是`configfsf.sub`与`configfsf.guess`
     * 注意！对于`mpc`这俩文件在`build-aux`子文件夹下
-*   回到buildL文件夹中`../configure --prefix=${SYSDIR} --target=${TARGET} --enable-languages=c,c++ --disable-multilib --disable-libsanitizer`
+*   回到buildL文件夹中`../configure --prefix=${GCCDIR} --target=${TARGET} --enable-languages=c,c++ --disable-multilib --disable-libsanitizer  --enable-__cxa_atexit --enable-threads=posix --with-arch=loongarch64 --with-abi=lp64d --disable-checking`
 *   `make -j4 all-gcc` 然后`make -j8 install-gcc`
 *   `ln -s /lib64/ld-2.28.so /lib64/ld-linux-loongarch-lp64d.so.1`
 *  去除`gccSource.sh`里最后两个注释。然后重新`. ./gccSource.sh`
-*  `make -j4`   `make install -j8`
+*  `make -j4`   `make install-strip -j8`
+*  修改`/opt/gcc13/loongarch64-unknown-linux-gnu/lib/libc.so` 最后一行增加  `AS_NEEDED ( /lib/loongarch64-linux-gnu/libdl.so.2 )`
 
-## 4.GDB
+## 3.GDB
 *  如果需要gdb。请在步骤1.binutils的configure步骤中。去除`--disable-gdb`。gmp库需要手动编译安装一下。你可以用gcc源码里面的那份
 
-## 99.未来计划
-*  也许应该给一下`-mlsx -mlasx`参数以开启向量支持
-*  使用[lonngnix提供的](http://www.loongnix.cn/zh/toolchain/GNU/)，有向量支持的glibc代码来代替直接从机器里拷贝现成二进制文件。虽然我感觉直接从服务器上复制来的那些应该是带向量支持的
-*  我从来没有验证过这个GCC13.1和自带的GCC8.1相比，到底有没有提示。也许有闲情逸致可以跑一下SPEC测试
-   *   见https://www.163.com/dy/article/GGVJG67E05528NB7.html
+
