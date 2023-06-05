@@ -1,0 +1,22 @@
+# 就地编译LLVM
+
+## 0.准备工作
+*    这里的就地指的是在LA上
+*    仓库里的cmake版本太老 自己build一个
+*    `apt install ninja-build  libffi-dev libssl-dev`
+*    依赖于安装在特定位置的GCC13
+
+## 1.编译安装
+*    `git clone --depth 1 https://github.com/llvm/llvm-project.git && cd llvm-project`
+*    source一下`gcc13Source.sh`
+*    `cmake -S llvm -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/llvm16   -DCMAKE_C_COMPILER=/opt/gcc13/bin/gcc -DCMAKE_CXX_COMPILER=/opt/gcc13/bin/g++ -DLLVM_TARGETS_TO_BUILD="host" -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_FFI:BOOL=ON -DLLVM_ENABLE_RTTI:BOOL=ON  -DLLVM_INSTALL_UTILS:BOOL=ON -DLLVM_BUILD_LLVM_DYLIB:BOOL=ON -DLLVM_LINK_LLVM_DYLIB:BOOL=ON -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF  -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF -DGCC_INSTALL_PREFIX=/opt/gcc13 -DCMAKE_CXX_LINK_FLAGS="-Wl,-rpath,/opt/gcc13/lib -L/opt/gcc13/lib"`
+     * 如果需要WebAssembly支持，则请添加到DLLVM_TARGETS_TO_BUILD中，并在安装llvm后手段下载wasi-sdk中的`libclang_rt.builtins-wasm32.a`
+*    ninja -C build
+*    ninja -C build install
+
+## 2.对应的source文件
+*    注：我喜欢把自己编译的东西装到`/opt`中，并不默认加入PATH。以方便随时回滚
+```sh
+#!/bin/sh
+export PATH=/opt/llvm16/bin:${PATH}
+```
