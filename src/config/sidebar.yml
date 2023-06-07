@@ -9,7 +9,9 @@
     - label: '91版测试'
       link: '/pages/v/build91'
     - label: '113版测试'
-      link: '/pages/v/build113'      
+      link: '/pages/v/build113'    
+    - label: '114版测试'
+      link: '/pages/v/build114'        
 - label: '依赖调整与准备'
   items:
     - label: 'rustc'
