@@ -17,8 +17,8 @@
    export LD_LIBRARY_PATH="${GCCDIR}/lib:${GCCDIR}/${TARGET}/lib"
    export PATH=${GCCDIR}/bin:${PATH}
    #export LD_LIBRARY_PATH=${GCCDIR}/libexec/gcc/${TARGET}/13.1.0:${LD_LIBRARY_PATH}
-   export CPLUS_INCLUDE_PATH=/usr/include/loongarch64-linux-gnu/
-   export C_INCLUDE_PATH=/usr/include/loongarch64-linux-gnu/
+   #export CPLUS_INCLUDE_PATH="/usr/include/loongarch64-linux-gnu/:${GCCDIR}/include/c++/13.1.0/"
+   #export C_INCLUDE_PATH=/usr/include/loongarch64-linux-gnu/
    unset CFLAGS
    #export CXXFLAGS="-Wl,-rpath,${GCCDIR}/lib -L${GCCDIR}/lib" 
 ```
@@ -53,7 +53,7 @@ exec as.real ${tmpcmd}
 *   回到buildL文件夹中`../configure --prefix=${GCCDIR} --target=${TARGET} --enable-languages=c,c++ --disable-multilib --disable-libsanitizer  --enable-__cxa_atexit --enable-threads=posix --with-arch=loongarch64 --with-abi=lp64d --disable-checking`
 *   `make -j4 all-gcc` 然后`make -j8 install-gcc`
 *   `ln -s /lib64/ld-2.28.so /lib64/ld-linux-loongarch-lp64d.so.1`
-*  去除`gccSource.sh`里最后两个注释。然后重新`. ./gccSource.sh`
+*  去除`gccSource.sh`里最后四个注释。然后重新`. ./gccSource.sh`
 *  `make -j4`   `make install-strip -j8`
 *  修改`/opt/gcc13/loongarch64-unknown-linux-gnu/lib/libc.so` 最后一行增加  `AS_NEEDED ( /lib/loongarch64-linux-gnu/libdl.so.2 )`
 
