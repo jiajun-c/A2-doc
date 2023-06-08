@@ -1,28 +1,89 @@
 # 114.b6
-apt install python3-distutils libasound2-dev libpulse-dev libxkbcommon-x11-dev libpango1.0-dev libx11-xcb-dev  libxrandr-dev  libgtk-3-dev libdbus-glib-1-dev
-
-with Python 3.7.3
-
-`unset UNZIP`  
-`unset ZIPINFO  #这俩是loongnix特有的`
+环境准备
+------
+   * `apt install python3-distutils libasound2-dev libpulse-dev libxkbcommon-x11-dev libpango1.0-dev libx11-xcb-dev  libxrandr-dev  libgtk-3-dev libdbus-glib-1-dev`
+   * `cargo install cbindgen`
+   * 如果需要运行测试。则还需要https://github.com/mozilla/fix-stacks
+    *  安装后需要在`tools/rb/fix-stacks.py`内手动指定路径，否则会找不到
 
 Config
 ------
-
- cargo install cbindgen
-
+* mozconfig
 ```text-plain
 ac_add_options --enable-application=comm/mail
 ac_add_options --disable-crashreporter
-ac_add_options --disable-jit  #jit缺spectreZeroRegister
 ac_add_options --without-wasm-sandboxed-libraries
-ac_add_options --enable-debug   #测试的时候才用这个
+ac_add_options --enable-official-branding
+ac_add_options --enable-optimize
+#ac_add_options --enable-linker=mold
+#export BUILD_OFFICIAL=1
+#export MOZILLA_OFFICIAL=1	
+#export MOZ_UPDATE_CHANNEL=release
+#mk_add_options BUILD_OFFICIAL=1
+#mk_add_options MOZ_CO_PROJECT=mail
+#mk_add_options MOZILLA_OFFICIAL=1
 ```
 
 PATCH
 -----
+###  D178494
+* D178494.diff
+```diff
+diff --git a/js/xpconnect/src/XPCJSContext.cpp b/js/xpconnect/src/XPCJSContext.cpp
+--- a/js/xpconnect/src/XPCJSContext.cpp
++++ b/js/xpconnect/src/XPCJSContext.cpp
+@@ -950,11 +950,11 @@
+       cx, JSJITCOMPILER_FULL_DEBUG_CHECKS,
+       StaticPrefs::javascript_options_jit_full_debug_checks_DoNotUseDirectly());
+ #endif
+ 
+ #if !defined(JS_CODEGEN_MIPS32) && !defined(JS_CODEGEN_MIPS64) && \
+-    !defined(JS_CODEGEN_RISCV64)
++    !defined(JS_CODEGEN_RISCV64) && !defined(JS_CODEGEN_LOONG64)
+   JS_SetGlobalJitCompilerOption(
+       cx, JSJITCOMPILER_SPECTRE_INDEX_MASKING,
+       StaticPrefs::javascript_options_spectre_index_masking_DoNotUseDirectly());
+   JS_SetGlobalJitCompilerOption(
+       cx, JSJITCOMPILER_SPECTRE_OBJECT_MITIGATIONS,
+diff --git a/modules/libpref/init/StaticPrefList.yaml b/modules/libpref/init/StaticPrefList.yaml
+--- a/modules/libpref/init/StaticPrefList.yaml
++++ b/modules/libpref/init/StaticPrefList.yaml
+@@ -7789,14 +7789,14 @@
+   type: bool
+   value: true
+   mirror: always  # LoadStartupJSPrefs
+   do_not_use_directly: true
+ 
+-#if !defined(JS_CODEGEN_MIPS32) && !defined(JS_CODEGEN_MIPS64)
++#if !defined(JS_CODEGEN_MIPS32) && !defined(JS_CODEGEN_MIPS64) && !defined(JS_CODEGEN_LOONG64)
+   # Spectre security vulnerability mitigations for the JS JITs.
+   #
+-  # NOTE: The MIPS backends do not support these mitigations (and generally
++  # NOTE: The MIPS and LoongArch backends do not support these mitigations (and generally
+   #       do not need them). In that case, leave the pref unlisted with its
+   #       default value of false.
+ -   name: javascript.options.spectre.index_masking
+     type: bool
+     value: true
+@@ -7824,11 +7824,11 @@
+ -   name: javascript.options.spectre.jit_to_cxx_calls
+     type: bool
+     value: true
+     mirror: always  # LoadStartupJSPrefs
+     do_not_use_directly: true
+-#endif  // !defined(JS_CODEGEN_MIPSXX)
++#endif  // !defined(JS_CODEGEN_MIPSXX) && !defined(JS_CODEGEN_LOONG64)
+ 
+ # Separate pref to override the values of the Spectre-related prefs above for
+ # isolated web content processes, where we don't need these mitigations.
+ - name: javascript.options.spectre.disable_for_isolated_content
+   type: bool
+```
+```sh 
+patch -p1 -d thunderbird-114.0 < D178494.diff
+```
 
-####  js/xpconnect/src/xpcpublic.h
+###  js/xpconnect/src/xpcpublic.h
 
 ```diff
 --- a/js/xpconnect/src/xpcpublic.h      2023-06-07 22:21:05.612276560 +0800
@@ -38,7 +99,7 @@ PATCH
  #endif
 ```
 
-#### comm/third\_party/botan
+### comm/third\_party/botan
 
 ```sh
 #cd到代码树的上一层
@@ -46,12 +107,11 @@ https://github.com/randombit/botan/commit/7bc8a874f613630d20a90d742cffef1466ba11
 patch -p1 -d thunderbird-114.0/comm/third_party/botan/ < botan-7bc8a.patch
 ```
 
-#### ipc/chromium/src/build/build\_config.h
+### ipc/chromium/src/build/build\_config.h
 
 *   这个文件将会在116版本被移除，see [THIS](https://bugzilla.mozilla.org/show_bug.cgi?id=1835185)
-
-```sh
-cat > ipc-chromium.patch<< EOF
+*   ipc-chromium.patch
+```diff 
 --- a/ipc/chromium/src/build/build_config.h
 +++ b/ipc/chromium/src/build/build_config.h
 @@ -97,6 +97,9 @@
@@ -64,15 +124,14 @@ cat > ipc-chromium.patch<< EOF
  #elif defined(__mips__)
  #  define ARCH_CPU_MIPS 1
  #  define ARCH_CPU_32_BITS 1
- EOF
- 
+```
+```sh 
 patch -p1 -d thunderbird-114.0 < ipc-chromium.patch
 ```
 
-#### third\_party/rust/nix
-
-```sh
-cat > nix.patch<< EOF
+### third\_party/rust/nix
+*  nix.patch
+```diff
 --- a/third_party/rust/nix/.cargo-checksum.json	2023-06-01 09:14:39.000000000 +0800
 +++ b/third_party/rust/nix/.cargo-checksum.json	2023-06-05 01:23:59.000000000 +0800
 @@ -1 +1 @@
@@ -91,13 +150,15 @@ cat > nix.patch<< EOF
      target_arch = "riscv32",
      target_arch = "riscv64"
  ))]
+```
+```sh
 patch -p1 -d thunderbird-114.0 < nix.patch
 ```
 
-#### third\_party/rust/cty
+### third\_party/rust/cty
+* cty.path
 
-```sh
-cat > cty.patch<< EOF
+```diff
 --- a/third_party/rust/cty/.cargo-checksum.json	2023-06-05 12:01:58.182619216 +0800
 +++ b/third_party/rust/cty/.cargo-checksum.json	2023-06-05 12:04:50.000000000 +0800
 @@ -1 +1 @@
@@ -116,18 +177,17 @@ diff --color -Nru third_party/rust/cty-orig/src/lib.rs third_party/rust/cty/src/
            target_arch = "sparc64",
            target_arch = "x86",
            target_arch = "x86_64",
-EOF
+```
+```sh
 patch -p1 -d thunderbird-114.0 < cty.patch
 ```
 
 *   有人指出这个crate已经不再维护了。因为它提供的功能已经被`core`提供了。但是FF还在用这个。(这样搞得LA的支持一直进不去)
 *   难到要去动FF那边的代码。让它不再依赖这个？
 
-#### third\_party/rust/authenticator
-
-```sh
-cat > authenticator.patch<< EOF
-
+### third\_party/rust/authenticator
+* authenticator.patch
+```diff
 --- a/third_party/rust/authenticator/build.rs	2023-06-05 12:29:33.246709053 +0800
 +++ b/third_party/rust/authenticator/build.rs	2023-06-05 12:30:31.000000000 +0800
 @@ -47,6 +47,8 @@
@@ -167,14 +227,14 @@ cat > authenticator.patch<< EOF
 +pub const _HIDIOCGRDESCSIZE: __u32 = 2147764225;
 +pub const _HIDIOCGRDESC: __u32 = 2416199682;
 \ 文件尾没有换行符
-EOF
+```
+```sh
 patch -p1 -d thunderbird-114.0 < authenticator.patch
 ```
 
-#### third\_party/libwebrtc/build/build\_config.h
-
-```sh
-cat > webrtc_config.patch<< EOF
+### third\_party/libwebrtc/build/build\_config.h
+* webrtc_config.patch
+```diff
 --- a/third_party/libwebrtc/build/build_config.h	2023-06-05 13:43:00.877924504 +0800
 +++ b/third_party/libwebrtc/build/build_config.h	2023-06-05 13:44:55.564549320 +0800
 @@ -173,6 +173,11 @@
@@ -189,14 +249,14 @@ cat > webrtc_config.patch<< EOF
  #elif defined(__MIPSEL__)
  #if defined(__LP64__)
  #define ARCH_CPU_MIPS_FAMILY 1
-EOF
+```
+```sh
 patch -p1 -d thunderbird-114.0 < webrtc_config.patch
 ```
 
-#### js/src/old-configure.in
-
-```sh
-cat > js_relro.patch<< EOF
+### js/src/old-configure.in
+* js_relro.patch //我不确定这个和下一个是否必要
+```diff
 --- a/js/src/old-configure.in	2023-06-05 14:02:27.227939022 +0800
 +++ b/js/src/old-configure.in	2023-06-05 14:03:31.191172051 +0800
 @@ -214,7 +214,7 @@
@@ -208,14 +268,14 @@ cat > js_relro.patch<< EOF
      AC_TRY_LINK(,,AC_MSG_RESULT([yes]),
                    AC_MSG_RESULT([no])
                    LDFLAGS=$_SAVE_LDFLAGS)
-EOF
+```
+```sh
 patch -p1 -d thunderbird-114.0 < js_relro.patch
 ```
 
-#### old-configure.in
-
-```sh
-cat > root_relo.patch << EOF
+### old-configure.in
+* root_relo.patch
+```diff
 --- a/old-configure.in	2023-06-05 14:10:13.444750758 +0800
 +++ b/old-configure.in	2023-06-05 14:10:26.408702096 +0800
 @@ -213,14 +213,14 @@
@@ -235,15 +295,14 @@ cat > root_relo.patch << EOF
      AC_TRY_LINK(,,AC_MSG_RESULT([yes]),
                    AC_MSG_RESULT([no])
                    LDFLAGS=$_SAVE_LDFLAGS)
-EOF
-
+```
+```sh
 patch -p1 -d thunderbird-114.0 < root_relo.patch
 ```
 
-#### python/mozbuild/mozbuild/test/configure/test\_toolchain\_configure.py
-
-```sh
-cat > test_toolchain_configure.patch << EOF
+### python/mozbuild/mozbuild/test/configure/test\_toolchain\_configure.py
+* test_toolchain_configure.patch
+```diff
 --- a/python/mozbuild/mozbuild/test/configure/test_toolchain_configure.py	2023-06-05 14:15:21.047105715 +0800
 +++ b/python/mozbuild/mozbuild/test/configure/test_toolchain_configure.py	2023-06-05 14:15:39.054983481 +0800
 @@ -1335,6 +1335,7 @@
@@ -254,14 +313,14 @@ cat > test_toolchain_configure.patch << EOF
          "riscv64-unknown-linux-gnu": little_endian + {"__riscv": 1, "__riscv_xlen": 64},
          "sh4-unknown-linux-gnu": little_endian + {"__sh__": 1},
      }
-EOF
+```
+```sh
 patch -p1 -d thunderbird-114.0 < test_toolchain_configure.patch
 ```
 
-#### /xpcom/reflect/xptcall/md/unix/
-
-```sh
-cat > xpcom.patch << EOF
+### /xpcom/reflect/xptcall/md/unix/
+* xpcom.patch
+```diff
 --- a/xpcom/reflect/xptcall/md/unix/moz.build	2023-06-05 14:21:27.360254947 +0800
 +++ b/xpcom/reflect/xptcall/md/unix/moz.build	2023-06-05 14:22:10.207882546 +0800
 @@ -135,6 +135,13 @@
@@ -1008,13 +1067,16 @@ cat > xpcom.patch << EOF
 +}
 +
 +#include "xptcstubsdef.inc"
-EOF
+```
+```sh
 patch -p1 -d thunderbird-114.0 < xpcom.patch
 ```
 
 编译
 --
 ```sh
+unset UNZIP  
+unset ZIPINFO  #这俩是loongnix特有的
 ./mach configure
 ./mach build --priority more
 ```
