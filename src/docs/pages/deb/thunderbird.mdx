@@ -1,0 +1,25 @@
+使用Mach为thunderbird打包
+==
+
+*   在此之前需要完成`./mach build`
+
+
+打包二进制文件到压缩包
+===
+*   命令：`./mach pack`
+*   这将会把编译好的可执行文件和相关资源打包到一个压缩包内。路径为`obj-XX/dist/thunderbird-XXX..linux-loongarch64tar.bz2`
+
+打包成deb
+===
+* 修改`python/mozbuild/mozbuild/repackaging/deb.py` 在`_DEB_ARCH`中增加loongarch64的相关信息
+* 以下修改发生在`browser/installer/linux/debian`内 # 115开始估计这个路径就有微小变化
+   *  `install.in` 把 `firefox` 修改成 `thunderbird`
+   *  `links.in`   把 `firefox` 修改成 `thunderbird`
+   *  `rules`  增加
+
+```Makefile
+override_dh_shlibdeps:
+  dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info   #因为/opt/gcc13/lib/libstdc++.so.6既不属于tb内部，也不属于任何包
+```
+
+* 执行`./mach repackage deb -i=<上文提到的压缩包> -o=<目标deb包的存储路径> --arch=loongarch64 --version=<版本号> --build-number=<随便> --templates=browser/installer/linux/debian
