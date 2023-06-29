@@ -46,6 +46,43 @@ Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
 ```
 
+依赖：类似gcc，make之类的依赖不需要填写，如果不确定依赖，那么可以通过
+
+```shell
+dpkg-depcheck -d ./configure
+```
+
+来查看需要的依赖
+
+```shell
+Packages needed:
+  libidn2-dev:amd64
+  libtasn1-6-dev:amd64
+  libgnutls30:amd64
+  libp11-kit-dev:amd64
+  libtasn1-6:amd64
+  python3.9-minimal
+  libexpat1:amd64
+  mawk
+  nettle-dev:amd64
+  libidn2-0:amd64
+  gettext
+  tzdata
+  libglib2.0-0:amd64
+  pkg-config
+  libicu67:amd64
+  libhogweed6:amd64
+  libffi7:amd64
+  libfakeroot:amd64
+  libxml2:amd64
+  libp11-kit0:amd64
+  libunistring2:amd64
+  libnettle8:amd64
+  libgnutls28-dev:amd64
+  shared-mime-info
+```
+
+将其中有dev后缀的包放入到
 ### 2.2 Rules
 
 `rules`文件的作用和`Makefile`相同，其中设置的target也就是make的target

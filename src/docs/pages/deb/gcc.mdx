@@ -1,0 +1,43 @@
+# 生成gcc deb包 
+
+# 1. 获取源码包
+
+环境上先选择debian sid版本获取到gcc-13的源码包
+
+# 2. 修改
+
+## 删除ada支持
+
+因为ada中使用了gnat-12，但是这个目前还没有被移植到loongarch的旧世界上
+
+为了保险起见，我们将fortran，go, rust等语言的功能也进行了关闭，只保留了对
+c, c++的支持。
+
+## 修改ld名称
+
+将`src/gcc/config/loongarch/gnu-user.h`中的`"ld-linux-loongarch-"ABI-SPEC`
+
+## autoconf and libffi
+
+如果想增加对其他语言的支持，需要使用更新的libffi(在libffi3.44中已经添加了对 loongarch的支持，但是libffi3.44
+开始使用autoconf2.71，并且使用了其中的一些特性，而目前整个项目的autoconf版本为2.69 所以最终我们选择关闭对其他语言的支持。
+
+## disable multilib
+
+loongarch目前的gcc版本在multilib上的支持还不足
+
+```shell
+CONFARGS += --disable-multilib
+```
+## 更新dwz
+
+当前机器上dwz的版本信息为0.12，无法识别.debug_doclist这个符号，我们选择编译了一份最新的dwz源码
+
+```shell
+dwz: debian/cpp-13/usr/libexec/gcc/loongarch64-linux-gnu/13/cc1: Unknown debugging section .debug_loclists
+```
+
+
+
+
+
