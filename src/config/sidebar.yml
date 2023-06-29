@@ -30,6 +30,8 @@
       link: '/pages/deb/start'
     - label: '为thunderbird打包deb包'
       link: '/pages/deb/thunderbird'
+    - label: 'gcc-13打包'
+      link: '/pages/deb/gcc'
 - label: 'Thunderbird'
   items:
     - label: 'Thunderbird'
