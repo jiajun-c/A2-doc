@@ -1,4 +1,10 @@
 # 114.b6
+小结
+------
+我一共尝试了两种打包方式，一种是直接从雷鸟的release里下载的源码包。一种是从Debian的salsa里克隆的特化源码（而这个是不带测试脚本的）
+
+我根据前者编写好了补丁文件，然后尝试编译打包，并取得了成功（能收发邮件+能运行测试），但没有多语言支持。于是转向尝试从Debian的salsa里克隆带有Debian特化的打包规则脚本的thunderbird。在修改了一些内容以后，运行里面的打包脚本。结果出来了多语言支持包，但是却没有thunderbird本体。至于为什么会这样，我还得继续研究。
+
 环境准备
 ------
    * `apt install python3-distutils libasound2-dev libpulse-dev libxkbcommon-x11-dev libpango1.0-dev libx11-xcb-dev  libxrandr-dev  libgtk-3-dev libdbus-glib-1-dev`
